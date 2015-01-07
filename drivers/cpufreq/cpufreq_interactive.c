@@ -1127,8 +1127,11 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 	unsigned long flags;
 	unsigned int anyboost;
 
-	switch (event) {А
+	switch (event) {
 	case CPUFREQ_GOV_START:
+		if (!cpu_online(policy->cpu))
+			return -EINVAL;
+
 		mutex_lock(&gov_lock);
 
 		freq_table =
@@ -1323,4 +1326,3 @@ MODULE_AUTHOR("Mike Chan <mike@android.com>");
 MODULE_DESCRIPTION("'cpufreq_interactive' - A cpufreq governor for "
 	"Latency sensitive workloads");
 MODULE_LICENSE("GPL");
-
