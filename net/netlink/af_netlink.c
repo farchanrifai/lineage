@@ -1357,7 +1357,7 @@ static int netlink_sendmsg(struct kiocb *kiocb, struct socket *sock,
 		dst_group = ffs(addr->nl_groups);
 		err =  -EPERM;
 		if ((dst_group || dst_pid) &&
-		    !netlink_capable(sock, NL_NONROOT_SEND))
+				!netlink_capable(sock, NL_NONROOT_SEND))
 			goto out;
 	} else {
 		dst_pid = nlk->dst_pid;
@@ -1744,7 +1744,7 @@ static int netlink_dump(struct sock *sk)
 	module = cb->module;
 	mutex_unlock(nlk->cb_mutex);
 
-	module_put(module);
+	module_put(cb->module);
 	netlink_destroy_callback(cb);
 	return 0;
 
