@@ -3705,7 +3705,7 @@ static void qpnp_chg_thermal_monitor_callback(struct alarm *alarm)
 	schedule_work(&chip->thermal_monitor_work);
 }
 
-#define CONSECUTIVE_COUNT	3
+#define CONSECUTIVE_COUNT	10
 #define VBATDET_MAX_ERR_MV	50
 static void
 qpnp_eoc_work(struct work_struct *work)
