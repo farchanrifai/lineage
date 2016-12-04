@@ -55,7 +55,7 @@ int var_is_headset_in_use = 0;
 #include "tpa6130a2.h"
 #endif
 
-struct sound_control {
+/*struct sound_control {
 	int default_headphones_value;
 	int default_speaker_value;
 	int default_mic_value;
@@ -67,7 +67,7 @@ struct sound_control {
 	.playback_lock = false,
 	.speaker_lock = false,
 	.recording_lock = false,
-};
+};*/
 
 #define TAIKO_MAD_SLIMBUS_TX_PORT 12
 #define TAIKO_MAD_AUDIO_FIRMWARE_PATH "wcd9320/wcd9320_mad_audio.bin"
@@ -7354,7 +7354,7 @@ static struct regulator *taiko_codec_find_regulator(struct snd_soc_codec *codec,
 	return NULL;
 }
 
-void update_headphones_volume_boost(unsigned int vol_boost)
+/*void update_headphones_volume_boost(unsigned int vol_boost)
 {
 	int default_val = soundcontrol.default_headphones_value;
 	int boosted_val = default_val + vol_boost;
@@ -7409,7 +7409,7 @@ void update_mic_gain(unsigned int vol_boost)
 	pr_info("Sound Control: Boosted Mic value %d\n",
 		taiko_read(soundcontrol.snd_control_codec,
 		TAIKO_A_CDC_TX3_VOL_CTL_GAIN));
-}
+}*/
 
 #ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
 struct snd_soc_codec *fauxsound_codec_ptr;
