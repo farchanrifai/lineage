@@ -1328,7 +1328,8 @@ qpnp_chg_vbatdet_lo_irq_handler(int irq, void *_chip)
 
 	pr_info("chg_done chg_sts: 0x%x triggered\n", chg_sts);
 	if (!chip->charging_disabled && (chg_sts & FAST_CHG_ON_IRQ)) {
-		schedule_delayed_work(&chip->eoc_work,
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->eoc_work,
 			msecs_to_jiffies(EOC_CHECK_PERIOD_MS));
 		if (get_hw_version_major() == 4 ||
 				get_hw_version_major() == 5) {
@@ -1375,11 +1376,13 @@ qpnp_chg_usb_chg_gone_irq_handler(int irq, void *_chip)
 			&& (usb_sts & CHG_GONE_IRQ)) {
 		qpnp_chg_charge_en(chip, 0);
 		qpnp_chg_force_run_on_batt(chip, 1);
-		schedule_delayed_work(&chip->arb_stop_work,
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->arb_stop_work,
 			msecs_to_jiffies(ARB_STOP_WORK_MS));
 		/* both usb_in and chg_gone are set */
 		__cancel_delayed_work(&chip->invalid_charger_work);
-		schedule_delayed_work(&chip->invalid_charger_work,
+		queue_delayed_work(system_power_efficient_wq,
+			&chip->invalid_charger_work,
 					msecs_to_jiffies(1500));
 	}
 
@@ -1615,7 +1618,8 @@ qpnp_chg_coarse_det_usb_irq_handler(int irq, void *_chip)
 				return rc;
 			}
 			ovp_ctl = ovp_ctl & USB_VALID_DEBOUNCE_TIME_MASK;
-			schedule_delayed_work(&chip->usbin_health_check,
+			queue_delayed_work(system_power_efficient_wq,
+				&chip->usbin_health_check,
 					msecs_to_jiffies(debounce[ovp_ctl]));
 		} else {
 			/* usb coarse-det rising edge, set the usb psy health
@@ -1711,7 +1715,8 @@ qpnp_chg_usb_usbin_valid_irq_handler(int irq, void *_chip)
 
 			qpnp_chg_usb_suspend_enable(chip, 0);
 			__cancel_delayed_work(&chip->invalid_charger_work);
-			schedule_delayed_work(&chip->invalid_charger_work,
+			queue_delayed_work(system_power_efficient_wq,
+				&chip->invalid_charger_work,
 					msecs_to_jiffies(1000));
 			chip->aicl_settled = false;
 		} else {
@@ -1740,7 +1745,8 @@ qpnp_chg_usb_usbin_valid_irq_handler(int irq, void *_chip)
 				chip->delta_vddmax_mv = 0;
 				qpnp_chg_set_appropriate_vddmax(chip);
 			}
-			schedule_delayed_work(&chip->eoc_work,
+			queue_delayed_work(system_power_efficient_wq,
+				&chip->eoc_work,
 				msecs_to_jiffies(EOC_CHECK_PERIOD_MS));
 			schedule_work(&chip->soc_check_work);
 
@@ -1758,11 +1764,11 @@ qpnp_chg_usb_usbin_valid_irq_handler(int irq, void *_chip)
 			/* Charger only mode */
 			if (get_powerup_reason() &
 				(1 << PU_REASON_EVENT_USB_CHG))
-				schedule_delayed_work(
+				queue_delayed_work(system_power_efficient_wq,
 					&chip->invalid_charger_work,
 					msecs_to_jiffies(5000));
 			else
-				schedule_delayed_work(
+				queue_delayed_work(system_power_efficient_wq,
 					&chip->invalid_charger_work,
 					msecs_to_jiffies(2000));
 		}
@@ -1907,7 +1913,8 @@ qpnp_chg_dc_dcin_valid_irq_handler(int irq, void *_chip)
 				chip->delta_vddmax_mv = 0;
 				qpnp_chg_set_appropriate_vddmax(chip);
 			}
-			schedule_delayed_work(&chip->eoc_work,
+			queue_delayed_work(system_power_efficient_wq,
+				&chip->eoc_work,
 				msecs_to_jiffies(EOC_CHECK_PERIOD_MS));
 			schedule_work(&chip->soc_check_work);
 		}
@@ -2062,7 +2069,8 @@ qpnp_chg_chgr_chg_fastchg_irq_handler(int irq, void *_chip)
 			}
 
 			if (!chip->charging_disabled) {
-				schedule_delayed_work(&chip->eoc_work,
+				queue_delayed_work(system_power_efficient_wq,
+					&chip->eoc_work,
 					msecs_to_jiffies(EOC_CHECK_PERIOD_MS));
 				if (get_hw_version_major() == 4 ||
 						get_hw_version_major() == 5) {
@@ -3823,7 +3831,8 @@ qpnp_eoc_work(struct work_struct *work)
 	}
 
 check_again_later:
-	schedule_delayed_work(&chip->eoc_work,
+	queue_delayed_work(system_power_efficient_wq,
+		&chip->eoc_work,
 		msecs_to_jiffies(EOC_CHECK_PERIOD_MS));
 	return;
 
@@ -5631,7 +5640,8 @@ qpnp_charger_probe(struct spmi_device *spmi)
 	power_supply_set_present(chip->usb_psy,
 			qpnp_chg_is_usb_chg_plugged_in(chip));
 
-	schedule_delayed_work(&chip->aicl_check_work,
+	queue_delayed_work(system_power_efficient_wq,
+		&chip->aicl_check_work,
 		msecs_to_jiffies(EOC_CHECK_PERIOD_MS));
 
 	chip->s4_reg = regulator_get(NULL, "8941_boost");
