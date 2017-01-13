@@ -4534,7 +4534,7 @@ static int taiko_volatile(struct snd_soc_codec *ssc, unsigned int reg)
 	return 0;
 }
 
-static int reg_access(unsigned int reg)
+/*static int reg_access(unsigned int reg)
 {
 	int ret = 1;
 
@@ -4557,7 +4557,7 @@ static int reg_access(unsigned int reg)
 		}
 
 	return ret;
-}
+}*/
 
 #ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
 
