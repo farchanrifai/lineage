@@ -13,6 +13,9 @@
  *
  */
 
+#ifdef CONFIG_STATE_NOTIFIER
+#include <linux/state_notifier.h>
+#endif
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/delay.h>
@@ -5068,9 +5071,16 @@ static int fb_notifier_cb(struct notifier_block *self,
 		if (*blank == FB_BLANK_UNBLANK) {
 			dev_info(&mxt_data->client->dev, "##### UNBLANK SCREEN #####\n");
 			mxt_input_enable(mxt_data->input_dev);
+		#ifdef CONFIG_STATE_NOTIFIER
+	
+			state_resume();
+		#endif
 		} else if (*blank == FB_BLANK_POWERDOWN) {
 			dev_info(&mxt_data->client->dev, "##### BLANK SCREEN #####\n");
 			mxt_input_disable(mxt_data->input_dev);
+		#ifdef CONFIG_STATE_NOTIFIER
+			state_suspend();
+		#endif
 		}
 	}
 
