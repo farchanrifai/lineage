@@ -15,6 +15,7 @@
  #
  # Please maintain this if you use this script or any part of it
  #
+ # Modified by @farchanrifai for Apollo Kernel
 
 ###########################################################################
 # Bash Color
@@ -36,7 +37,6 @@ THREAD="-j10"
 KERNEL="zImage"
 OPT="CONFIG_NO_ERROR_ON_MISMATCH=y"
 DTBIMAGE="dt.img"
-DEFCONFIG="lineageos_cancro_defconfig"
 device="cancro"
 COMPILER="/home/farchan/arm-eabi-5.3/bin"
 
@@ -63,14 +63,16 @@ do
 case "$mchoice" in
 	y|Y )
 		APOLLO_F="dttw"
+		DEFCONFIG="apollo_dttw_defconfig"
 		echo
-		echo "Named dttw"
+		echo "DTTW -- S2W"
 		break
 		;;
 	n|N )
 		APOLLO_F="no_dttw"
+		DEFCONFIG="apollo_polos_defconfig"
 		echo
-		echo "Named no_dttw"
+		echo "POLOS -- NO DTTW"
 		break
 		;;
 	* )
